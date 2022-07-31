@@ -149,4 +149,13 @@ contract NftMarketplace {
         delete (s_listings[nftAddress][tokenId]);
         emit ItemCancelled(msg.sender, nftAddress, tokenId);
     }
+
+    function updateListing(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 newPrice
+    ) external isOwner(nftAddress, tokenId, msg.sender) isListed(nftAddress, tokenId) {
+        s_listings[nftAddress][tokenId].price = newPrice;
+        emit ItemListed(msg.sender, nftAddress, tokenId, newPrice);
+    }
 }
