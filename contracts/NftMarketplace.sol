@@ -38,6 +38,12 @@ contract NftMarketplace {
         uint256 price
     );
 
+    event ItemCancelled(
+        address indexed seller,
+        address indexed nftAddress,
+        uint256 indexed tokenId
+    );
+
     // NFT Contract Address => NFT Token ID => Listing
     mapping(address => mapping(uint256 => Listing)) private s_listings;
 
@@ -133,5 +139,14 @@ contract NftMarketplace {
         delete (s_listings[nftAddress][tokenId]);
         IERC721(nftAddress).safeTransferFrom(listing.seller, msg.sender, tokenId);
         emit ItemBought(msg.sender, nftAddress, tokenId, listing.price);
+    }
+
+    function cancelListing(address nftAddress, uint256 tokenId)
+        external
+        isOwner(nftAddress, tokenId, msg.sender)
+        isListed(nftAddress, tokenId)
+    {
+        delete (s_listings[nftAddress][tokenId]);
+        emit ItemCancelled(msg.sender, nftAddress, tokenId);
     }
 }
